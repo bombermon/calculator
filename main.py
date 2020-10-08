@@ -21,7 +21,6 @@ digits_dict = {'один': 1,'два': 2,'три': 3, 'четыре': 4, 'пят
 operation_dict = ['плюс', 'минус', 'умножить']
 
 
-def umnozit()
 
 def calc(main_str):
 
