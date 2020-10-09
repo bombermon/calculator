@@ -1,5 +1,6 @@
 #ИМПОРТ БИБЛИОТЕК
 import re
+
 #КОНЕЦ ИМПОРТА БИБЛИОТЕК
 
 #КОД СЛОВАМИ
@@ -9,9 +10,6 @@ import re
 #ИМЕЕМ ПЕРЕМЕННЫЕ first_number и second_number, в которых есть числа, с которыми работаем
 #ПРОИЗВОДИМ ОПЕРАЦИЮ В ЗАВИСИМОСТИ ОТ ПЕРЕМЕННОЙ Operation И ЗАПИСЫВАЕМ РЕЗУЛЬТАТ В ПЕРЕМЕННУЮ ANS
 #ОБРАЩАЕМСЯ К ПЕРЕМЕННОЙ ANS И К СЛОВАРЮ, ПЕРЕВОДЯ ЧИСЛО В ТЕКСТОВЫЙ ФОРМАТ
-
-
-
 
 digits_dict = {'один': 1,'два': 2,'три': 3, 'четыре': 4, 'пять': 5, 'шесть': 6, 'семь': 7,'восемь'
                   :8, 'девять': 9,'десять':10, 'одиннадцать': 11, 'двенадцать': 12, 'тринадцать': 13, 'четырнадцать':
@@ -30,14 +28,19 @@ def calc(main_str):
 	for string in operation_dict:
 		match = re.search(string, main_str)
 		if match:
-        	print('Найдено "{}" в "{}"'.format(string, text))
-        	text_pos = match.span()
-        	print(text[match.start():match.end()])
-    	else:
-        	print('Не найдено "{}"'.format(string))
+			print('Найдено "{}" в "{}"'.format(string, main_str))
+			text_pos = match.span()
+			print(main_str[match.start():match.end()])
+			current_operation = string
+		else:
+			print('Не найдено "{}"'.format(string))
 
-    main_str = re.split(r' ', main_str)
-    print(main_str, type(main_str), len(main_str))
+	tokens = main_str.split(current_operation)
+	first_pos, second_pos = tokens[:-1], tokens[-1:]
+	print(first_pos,' ',second_pos)
+
+	main_str = re.split(r' ', main_str)
+	print(main_str, type(main_str), len(main_str))
 
 
 
@@ -46,9 +49,9 @@ def calc(main_str):
   #  	if(len(main_str) = )
    # elif (main_str.index('плюс') == 1) or (main_str.index('умножить') == 1) or (main_str.index('минус') == 1):
 
-    ans = 0
+	ans = 0
 
-    return ans
+	return ans
 
 line_main = input('Введите выражение: ')
 line_main = line_main.lower()
