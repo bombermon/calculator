@@ -11,7 +11,10 @@ digits_dict = {'ноль': 0,'один': 1,'два': 2,'три': 3, 'четыр�
                   80, 'девяносто': 90}
 operation_dict = ['плюс', 'минус', 'умножить']
 
-eror_dict =  ['одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать','пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать'] #СПИСОК ДЛЯ ПРОВЕРКИ
+small_nums = ['ноль','один','два','три', 'четыре', 'пять', 'шесть', 'семь','восемь', 'девять']
+big_nums = ['двадцать','тридцать','сорок','пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто']
+
+eror_dict =  ['десять','одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать','пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать'] #СПИСОК ДЛЯ ПРОВЕРКИ
 
 #КОНЕЦ РАБОТЫ С ДАННЫМИ
 
@@ -42,6 +45,19 @@ def calc(main_str):    #ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО
 		for string in eror_dict:
 			if string == first_num[0] or string == first_num[1]:
 				return -1
+
+		first_flag = 0
+		second_flag = 0
+		for string in small_nums:
+			if string == first_num[1]:
+				first_flag += 1
+		for string in big_nums:
+			if string == first_num[0]:
+				second_flag += 1
+
+		if first_flag == 0 or second_flag == 0:
+			return -1
+
 		first_num = digits_dict[first_num[0]] + digits_dict[first_num[1]]
 	else:
 		first_num = digits_dict[first_num[0]]
@@ -52,6 +68,19 @@ def calc(main_str):    #ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО
 		for string in eror_dict:
 			if string == second_num[0] or string == second_num[1]:
 				return -1
+
+		first_flag = 0
+		second_flag = 0
+		for string in small_nums:
+			if string == second_num[1]:
+				first_flag += 1
+		for string in big_nums:
+			if string == second_num[0]:
+				second_flag += 1
+
+		if first_flag == 0 or second_flag == 0:
+			return -1
+
 		second_num = digits_dict[second_num[0]] + digits_dict[second_num[1]]
 	else:
 		second_num= digits_dict[second_num[0]]
