@@ -35,12 +35,9 @@ def calc(main_str):
 		else:
 			print('Не найдено "{}"'.format(string))
 
-	tokens = main_str.split(current_operation)
-	first_pos, second_pos = tokens[:-1], tokens[-1:]
-	print(first_pos,' ',second_pos)
-
-	main_str = re.split(r' ', main_str)
-	print(main_str, type(main_str), len(main_str))
+	tokens = main_str.split(' ' + current_operation + ' ')
+	first_num, second_num = tokens[:-1], tokens[-1:]
+	print(first_num,' ',second_num)
 
 
 
@@ -50,8 +47,13 @@ def calc(main_str):
    # elif (main_str.index('плюс') == 1) or (main_str.index('умножить') == 1) or (main_str.index('минус') == 1):
 
 
+	if current_operation == "плюс":
+		ans = first_num + second_num
+	elif current_operation == "умножить":
+		ans = first_num * second_num
+	elif current_operation == "минус":
+		ans = first_num - second_num
 
-	ans = 0
 	ans = num2words(ans, lang='ru')
 	return ans
 
