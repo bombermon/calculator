@@ -18,15 +18,43 @@ eror_dict =  ['десять','одиннадцать', 'двенадцать', '
 
 #КОНЕЦ РАБОТЫ С ДАННЫМИ
 
+#ФУНКЦИЯ ДЕЛЕНИЯ
 
-###НУЖНО ОБЯЗАТЕЛЬНО СДЕЛАТЬ ПРОВЕРКУ ВВЕЛ ЛИ ПОЛЬЗОВАТЕЛЬ ПО ФОРМЕ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+def division(numerator, denominator):
+    if (numerator % denominator == 0):
+        ans= str(numerator//denominator)
+        return ans
+    else:
+        ans= str(numerator//denominator)+ "."
+        l={}
+        index=0
+        numerator = numerator%denominator
+        l[numerator]=index
+        t=False
+        while t==False:
+            if numerator==0:
+                break
+            digit = numerator*10//denominator
+            numerator=numerator*10-(numerator*10//denominator)*denominator
+            if numerator not in l:
+                ans+=str(digit)
+                index+=1
+                l[numerator]=index
+                t=False
+            else:
+                ans+=str(digit)+")"
+                ans=ans[:l.get(numerator)+len(ans[:ans.index(".")+1])]+"("+ ans[l.get(numerator)+len(ans[:ans.index(".")+1]):]
+                t=True
+        return ans
+
+#ФУНКЦИЯ ДЕЛЕНИЯ
+
+
 
 def calc(main_str):    #ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВОДИТСЯ ОТВЕТ "-1" - следовательно что-то сделано неверно!
 
-	#ЗДЕСЬ КОГДА ТО БУДЕТ ПРОВЕРКА
 	if not main_str:
 		return -1
-	#РЕАЛЬНО БУДЕТ
 	current_operation = 'error'
 	for string in operation_dict:   #ПОИСК ОПЕРАЦИИ В СТРОКЕ
 		match = re.search(string, main_str)
