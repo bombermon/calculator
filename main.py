@@ -61,7 +61,7 @@ def division(numerator, denominator):
 def usual_number(current_num):
     match = re.search(' ', current_num[0])  # ПРОВЕРКА НА СОСТАВНОЕ ЧИСЛО 1
     if match:
-        first_num = current_num[0].split(' ')
+        current_num = current_num[0].split(' ')
         for string in eror_dict:
             if string == current_num[0] or string == current_num[1]:
                 return -1
@@ -78,10 +78,10 @@ def usual_number(current_num):
         if first_flag == 0 or second_flag == 0:
             return -1
 
-        first_num = digits_dict[current_num[0]] + digits_dict[current_num[1]]
+        current_num = digits_dict[current_num[0]] + digits_dict[current_num[1]]
     else:
-        first_num = digits_dict[current_num[0]]
-    return first_num
+        current_num = digits_dict[current_num[0]]
+    return current_num
 
 def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВОДИТСЯ ОТВЕТ "-1" - следовательно что-то сделано неверно!
 ####вСЕ ЕЩЕ НУЖНО СДЕЛАТЬ ПРОВЕРКУ ОБЯЗАТЕЛЬНО МОЛЮ СДЕЛАЙТЕ
@@ -98,6 +98,7 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
     tokens = main_str.split(' ' + current_operation + ' ')  # ДЕЛИМ ЧИСЛО УДАЛЯЯ ОПЕРАЦИЮ
     first_num, second_num = tokens[:-1], tokens[-1:]
 
+
     first_num = usual_number(first_num)
     second_num = usual_number(second_num)
 
@@ -109,11 +110,11 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
 
     if current_operation == "плюс":
         ans = first_num + second_num
-    elif current_operation == "умножить":
+    elif current_operation == "умножить" or current_operation == "умножит на":
         ans = first_num * second_num
     elif current_operation == "минус":
         ans = first_num - second_num
-    elif current_operation == "разделить на":
+    elif current_operation == "разделить на" or current_operation == "поделить на":
         ans = division(first_num, second_num)
 
     ans = num2words(ans, lang='ru')
