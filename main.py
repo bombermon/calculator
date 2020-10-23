@@ -11,7 +11,9 @@ digits_dict = {'ноль': 0,'один': 1,'два': 2,'три': 3, 'четыр�
                   80, 'девяносто': 90}
 operation_dict = ['плюс', 'минус', 'умножить', 'разделить на']
 
-after_dot = ['десятая', 'сотая', 'десятая', 'тысячная',  ]
+adot_dict = {'одна десятая': 0.1, 'одна сотая': 0.01, 'одна тысячная': 0.001, 'одна десятитысячная': 0.0001,
+             'одна стотысячная': 0.00001, 'одна миллионная': 0.000001}
+adot_usual = ['десятых', 'сотых', 'тысячных', 'десятитысячных', 'стотысячных', 'миллионных']
 
 small_nums = ['ноль','один','два','три', 'четыре', 'пять', 'шесть', 'семь','восемь', 'девять']
 big_nums = ['двадцать','тридцать','сорок','пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто']
@@ -25,29 +27,30 @@ eror_dict =  ['десять','одиннадцать', 'двенадцать', '
 
 def division(numerator, denominator):
     if (numerator % denominator == 0):
-        ans= str(numerator//denominator)
+        ans = str(numerator // denominator)
         return ans
     else:
-        ans= str(numerator//denominator)+ "."
-        l={}
-        index=0
-        numerator = numerator%denominator
-        l[numerator]=index
-        t=False
-        while t==False:
-            if numerator==0:
+        ans = str(numerator // denominator) + "."
+        l = {}
+        index = 0
+        numerator = numerator % denominator
+        l[numerator] = index
+        flag = False
+        while flag == False:
+            if numerator == 0:
                 break
-            digit = numerator*10//denominator
-            numerator=numerator*10-(numerator*10//denominator)*denominator
+            digit = numerator * 10 // denominator
+            numerator = numerator * 10 - (numerator * 10 // denominator) * denominator
             if numerator not in l:
-                ans+=str(digit)
-                index+=1
-                l[numerator]=index
-                t=False
+                ans += str(digit)
+                index += 1
+                l[numerator] = index
+                flag = False
             else:
-                ans+=str(digit)+")"
-                ans=ans[:l.get(numerator)+len(ans[:ans.index(".")+1])]+"("+ ans[l.get(numerator)+len(ans[:ans.index(".")+1]):]
-                t=True
+                ans += str(digit) + ")"
+                ans = ans[:l.get(numerator) + len(ans[:ans.index(".") + 1])] + "(" + ans[l.get(numerator) + len(
+                    ans[:ans.index(".") + 1]):]
+                flag = True
         return ans
 
 #ФУНКЦИЯ ДЕЛЕНИЯ
