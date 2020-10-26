@@ -126,9 +126,16 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
         print(ans)
         before_dot = num2words(ans[1], lang='ru')
         after_dot = ans[2]
+        match = re.search('\(\W\)', ans)
+        if match:
+            after_dot = after_dot
+        else:
 
 
-    else:
+            ans = before_dot + ' и ' + after_dot
+
+
+    else:       #ЕСЛИ ОБЫЧНОЕ ЧИСЛО
         ans = num2words(ans, lang='ru')
 
     #ЗДЕСЬ НУЖНО СДЕЛАТЬ ПРОВЕРКУ НА ПЕРИОДИЧНОСТЬ, ЕСЛИ ПЕРИОД ЕСТЬ - ВЫОДИМ ПО-ОСОБОМУ
