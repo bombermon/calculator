@@ -133,6 +133,4 @@ while flag:
     else:
         flag = True
         print('Вы ввели неверное выражение!')
-        print("syn sobaky")
-
 
