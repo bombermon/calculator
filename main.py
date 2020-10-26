@@ -128,7 +128,7 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
         after_dot = ans[1]
         match = re.search(r'\(', after_dot)
         if match:
-            after_dot = after_dot
+            after_dot = after_dot ####ВМЕСТО ЭТОГО НУЖНО НАПИСАТЬ ВЫВОД ПЕРИОДА
         else:
             rank_10 = adot_usual[len(after_dot)]
             for i in after_dot:
