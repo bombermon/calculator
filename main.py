@@ -124,13 +124,13 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
     if match:
         ans = ans.split('.')
         print(ans)
-        before_dot = num2words(ans[1], lang='ru')
-        after_dot = ans[2]
-        match = re.search('\(\W\)', ans)
+        before_dot = num2words(ans[0], lang='ru')
+        after_dot = ans[1]
+        match = re.search(r'\(', after_dot)
         if match:
             after_dot = after_dot
         else:
-            rank_10 = adot_usual(len(after_dot))
+            rank_10 = adot_usual[len(after_dot)]
             for i in after_dot:
                 if i == '0':
                     after_dot = after_dot[1:]
@@ -138,7 +138,7 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
                     break
             after_dot = num2words(int(after_dot), lang='ru')
 
-            ans = before_dot + ' и ' + after_dot + rank_10
+            ans = before_dot + ' и ' + after_dot + ' ' + rank_10
 
 
     else:       #ЕСЛИ ОБЫЧНОЕ ЧИСЛО
