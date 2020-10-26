@@ -91,6 +91,8 @@ def translate_to_letter(word):
 # ФУНКЦИЯ ДЕЛЕНИЯ
 
 def division(numerator, denominator):
+    numerator = int(numerator * 100000000)
+    denominator = int(denominator * 100000000)
     if (numerator % denominator == 0):
         ans = str(numerator // denominator)
         return ans
@@ -141,7 +143,6 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
 
     first_num = translate_to_letter(first_num)
     second_num = translate_to_letter(second_num)
-    print(first_num, ' ВТОРОЕ ЧИСЛО ', second_num)
 
     if current_operation == "плюс":
         ans = first_num + second_num
@@ -151,14 +152,12 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
         ans = first_num - second_num
     elif current_operation == "разделить на" or current_operation == "поделить на":
         ans = division(first_num, second_num)
-    print(ans)
     ans = str(ans)
 
 
     match = re.search('\.', ans)  # ПРОВЕРКА НА НАЛИЧИЕ ТОЧКИ
     if match:
         ans = ans.split('.')
-        print(ans)
         before_dot = num2words(ans[0], lang='ru')
         after_dot = ans[1]
 
