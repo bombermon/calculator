@@ -2,29 +2,91 @@
 import re
 from num2words import num2words
 
+from googletrans import Translator
+from word2number.w2n import word_to_num
+from word2number import w2n
+
 # КОНЕЦ ИМПОРТА БИБЛИОТЕК
 
+
+
+
 # НАЧАЛО РАБОТЫ С ДАННЫМИ
-digits_dict = {'ноль': 0, 'один': 1, 'два': 2, 'три': 3, 'четыре': 4, 'пять': 5, 'шесть': 6, 'семь': 7, 'восемь'
-: 8, 'девять': 9, 'десять': 10, 'одиннадцать': 11, 'двенадцать': 12, 'тринадцать': 13, 'четырнадцать':
-                   14, 'пятнадцать': 15, 'шестнадцать': 16, 'семнадцать': 17, 'восемнадцать': 18, 'девятнадцать': 19,
-               'двадцать': 20, 'тридцать': 30, 'сорок': 40, 'пятьдесят': 50, 'шестьдесят': 60, 'семьдесят': 70,
-               'восемьдесят':
-                   80, 'девяносто': 90, 'сто': 100}
-operation_dict = ['плюс', 'минус', 'умножить', 'разделить на', 'поделить на', 'делить на', 'умножить на']
 
-adot_dict = {'одна десятая': 0.1, 'одна сотая': 0.01, 'одна тысячная': 0.001, 'одна десятитысячная': 0.0001,
-             'одна стотысячная': 0.00001, 'одна миллионная': 0.000001}
+operation_dict = ['плюс', 'минус', 'умножить', 'разделить на', 'поделить на', 'умножить на']
+
+adot_dict = {'десятых': 0.1, 'сотых': 0.01, 'тысячных': 0.001, 'десятитысячных': 0.0001,
+             'стотысячных': 0.00001, 'миллионных': 0.000001,
+             'десятая': 0.1, 'сотая': 0.01, 'тысячная': 0.001, 'десятитысячная': 0.0001,
+             'стотысячная': 0.00001, 'миллионная': 0.000001
+             }
+
 adot_usual = {1: 'десятых', 2: 'сотых', 3: 'тысячных', 4: 'десятитысячных', 5: 'стотысячных', 6: 'миллионных'}
-
-small_nums = ['ноль', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять']
-big_nums = ['двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто']
-
-eror_dict = ['десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать',
-             'семнадцать', 'восемнадцать', 'девятнадцать']  # СПИСОК ДЛЯ ПРОВЕРКИ
 
 
 # КОНЕЦ РАБОТЫ С ДАННЫМИ
+
+#ПЕРЕВОД ЧИСЕЛ В
+translator = Translator()
+def translate_to_letter(word):
+
+    second_rank = None
+    for string in adot_dict:  # ПОИСК ОПЕРАЦИИ В СТРОКЕ
+        match2 = re.search(string, word)
+        if match2:
+            second_rank = string
+    main_letter_adot = ' '
+
+    match = re.search(r' и ', word)
+    if match:
+        full_str = word.split(' и ')
+        before_dot = translator.translate(full_str[0], src='ru', dest='en').text
+        before_dot = w2n.word_to_num(before_dot)
+
+        after_dot = full_str[1]
+
+        if after_dot[-1] == ' ':
+            after_dot = after_dot[:-1]
+
+        after_dot = after_dot.split(' ')
+        rank = after_dot[-1]
+        del after_dot[-1]
+
+        main_letter_adot = ' '.join(after_dot)
+
+        main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
+        main_letter_adot = w2n.word_to_num(main_letter_adot)
+
+        rank = adot_dict[rank]
+
+
+        word = before_dot + main_letter_adot*rank
+    elif(second_rank != None):
+
+        if word[-1] == ' ':
+            word = word[:-1]
+
+        word = word.split(' ')
+        rank = word[-1]
+        del word[-1]
+
+
+        main_letter_adot = ' '.join(word)
+
+
+        main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
+        main_letter_adot = w2n.word_to_num(main_letter_adot)
+
+        rank = adot_dict[rank]
+
+
+        word =  main_letter_adot * rank
+    else:
+
+        word = translator.translate(word, src='ru', dest='en').text
+        word = w2n.word_to_num(word)
+    return word
+
 
 # ФУНКЦИЯ ДЕЛЕНИЯ
 
@@ -58,30 +120,7 @@ def division(numerator, denominator):
 
 
 # ФУНКЦИЯ ДЕЛЕНИЯ
-def usual_number(current_num):
-    match = re.search(' ', current_num[0])  # ПРОВЕРКА НА СОСТАВНОЕ ЧИСЛО 1
-    if match:
-        current_num = current_num[0].split(' ')
-        for string in eror_dict:
-            if string == current_num[0] or string == current_num[1]:
-                return -1
 
-        first_flag = 0
-        second_flag = 0
-        for string in small_nums:
-            if string == current_num[1]:
-                first_flag += 1
-        for string in big_nums:
-            if string == current_num[0]:
-                second_flag += 1
-
-        if first_flag == 0 or second_flag == 0:
-            return -1
-
-        current_num = digits_dict[current_num[0]] + digits_dict[current_num[1]]
-    else:
-        current_num = digits_dict[current_num[0]]
-    return current_num
 
 def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВОДИТСЯ ОТВЕТ "-1" - следовательно что-то сделано неверно!
 ####вСЕ ЕЩЕ НУЖНО СДЕЛАТЬ ПРОВЕРКУ ОБЯЗАТЕЛЬНО МОЛЮ СДЕЛАЙТЕ
@@ -97,16 +136,12 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
 
     tokens = main_str.split(' ' + current_operation + ' ')  # ДЕЛИМ ЧИСЛО УДАЛЯЯ ОПЕРАЦИЮ
     first_num, second_num = tokens[:-1], tokens[-1:]
+    first_num, second_num = first_num[0] , second_num[0]
 
 
-    first_num = usual_number(first_num)
-    second_num = usual_number(second_num)
-
-
-
-
-    if first_num == -1 or second_num == -1:  #ПРОВЕРКА НА ОШИБКИ
-        return -1
+    first_num = translate_to_letter(first_num)
+    second_num = translate_to_letter(second_num)
+    print(first_num, ' ВТОРОЕ ЧИСЛО ', second_num)
 
     if current_operation == "плюс":
         ans = first_num + second_num
@@ -114,18 +149,19 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
         ans = first_num * second_num
     elif current_operation == "минус":
         ans = first_num - second_num
-    elif current_operation == "разделить на" or current_operation == "поделить на" or current_operation == "делить на":
+    elif current_operation == "разделить на" or current_operation == "поделить на":
         ans = division(first_num, second_num)
     print(ans)
     ans = str(ans)
 
 
-    match = re.search('\.', ans)  #ПРОВЕРКА НА НАЛИЧИЕ ТОЧКИ
+    match = re.search('\.', ans)  # ПРОВЕРКА НА НАЛИЧИЕ ТОЧКИ
     if match:
         ans = ans.split('.')
         print(ans)
         before_dot = num2words(ans[0], lang='ru')
         after_dot = ans[1]
+
         match = re.search(r'\(', after_dot)
         if match:
             after_dot_parts = re.split(r'\(', after_dot)
@@ -136,7 +172,7 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
                     num_of_zeroes_in_period += 1
                 else:
                     break
-            after_dot_parts[1] = num2words(after_dot_parts[1][num_of_zeroes_in_period :], lang='ru')
+            after_dot_parts[1] = num2words(after_dot_parts[1][num_of_zeroes_in_period:], lang='ru')
 
             ans = before_dot
 
@@ -150,7 +186,7 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
                 after_dot_parts[0] = num2words(int(after_dot_parts[0]), lang='ru')
                 ans += ' и ' + after_dot_parts[0] + ' ' + rank_10
 
-            ans += ' и ' + "ноль "*num_of_zeroes_in_period + after_dot_parts[1] + " в периоде"
+            ans += ' и ' + "ноль " * num_of_zeroes_in_period + after_dot_parts[1] + " в периоде"
 
         else:
             rank_10 = adot_usual[len(after_dot)]
@@ -164,14 +200,13 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
             ans = before_dot + ' и ' + after_dot + ' ' + rank_10
 
 
-    else:       #ЕСЛИ ОБЫЧНОЕ ЧИСЛО
+    else:  # ЕСЛИ ОБЫЧНОЕ ЧИСЛО
         ans = num2words(ans, lang='ru')
 
-    #ЗДЕСЬ НУЖНО СДЕЛАТЬ ПРОВЕРКУ НА ПЕРИОДИЧНОСТЬ, ЕСЛИ ПЕРИОД ЕСТЬ - ВЫОДИМ ПО-ОСОБОМУ
-    #ДАЛЬШЕ ДЕЛАЕМ ПРОВЕРКУ НА ЧИСЛО С ТОЧКОЙ МЕЖДУ ЧИСЛАМИ, ВКЛЮЧЕНО В ПРОВЕРКУ НА ВЫВОДЕ
-    #СНАЧАЛА ПРОВЕРЯЕМ НА НАЛИЧИЕ ТОЧКИ(ДЕСЯТИЧНОСТЬ ТИПА) ПОТОМ ПРОВЕРЯЕМ НА НАЛИЧИЕ ПЕРИОДА(Т.Е. СКОБОК)3,3
+    # ЗДЕСЬ НУЖНО СДЕЛАТЬ ПРОВЕРКУ НА ПЕРИОДИЧНОСТЬ, ЕСЛИ ПЕРИОД ЕСТЬ - ВЫОДИМ ПО-ОСОБОМУ
+    # ДАЛЬШЕ ДЕЛАЕМ ПРОВЕРКУ НА ЧИСЛО С ТОЧКОЙ МЕЖДУ ЧИСЛАМИ, ВКЛЮЧЕНО В ПРОВЕРКУ НА ВЫВОДЕ
+    # СНАЧАЛА ПРОВЕРЯЕМ НА НАЛИЧИЕ ТОЧКИ(ДЕСЯТИЧНОСТЬ ТИПА) ПОТОМ ПРОВЕРЯЕМ НА НАЛИЧИЕ ПЕРИОДА(Т.Е. СКОБОК)3,3
     return ans
-
 
 flag = True
 while flag:
@@ -185,4 +220,3 @@ while flag:
     else:
         flag = True
         print('Вы ввели неверное выражение!')
-
