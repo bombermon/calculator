@@ -88,8 +88,7 @@ def translate_to_letter(word):
         return -1
     except AttributeError:
         return -1
-    except KeyError:
-        return -1
+
 
 # КОНЕЦ ФУНКЦИИ ПЕРЕВОДА
 
