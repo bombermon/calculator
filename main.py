@@ -23,69 +23,69 @@ adot_usual = {1: 'десятых', 2: 'сотых', 3: 'тысячных', 4: '�
 
 # КОНЕЦ РАБОТЫ С ДАННЫМИ
 
-#ПЕРЕВОД ЧИСЕЛ В
-translator = Translator()
+
 def translate_to_letter(word):
-    try:
-        second_rank = None
-        for string in adot_dict:
+    try: # Пытаемся сделать))
+        translator = Translator() # Инициализируем гугл переводчик
+        second_rank = None # Будем здесь хранить стрепень десятичной дроби
+        for string in adot_dict: # Тут мы ищем эту степень во входной строки
             match2 = re.search(string, word)
             if match2:
                 second_rank = string
         main_letter_adot = ' '
 
-        match = re.search(r' и ', word)
+        match = re.search(r' и ', word) # Проверяем на наличие десятичной части
         if match:
-            full_str = word.split(' и ')
-            before_dot = translator.translate(full_str[0], src='ru', dest='en').text
-            before_dot = w2n.word_to_num(before_dot)
+            full_str = word.split(' и ') # Делим текст на лист из слов
+            before_dot = translator.translate(full_str[0], src='ru', dest='en').text # Переводим текст части до запятой на английский
+            before_dot = w2n.word_to_num(before_dot) # с помощью сторонней библиотеки word2number переводим наш текст в числа
 
-            after_dot = full_str[1]
+            after_dot = full_str[1] # Собираем часть после запятой
 
             if after_dot[-1] == ' ':
                 after_dot = after_dot[:-1]
 
-            after_dot = after_dot.split(' ')
-            rank = after_dot[-1]
-            del after_dot[-1]
+            after_dot = after_dot.split(' ') # превращаем текст после запятой в лист из слов
+            rank = after_dot[-1] # Находим степень
+            del after_dot[-1] # Удаляем степень
 
             main_letter_adot = ' '.join(after_dot)
 
-            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
-            main_letter_adot = w2n.word_to_num(main_letter_adot)
+            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
+            main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
 
 
-            rank = adot_dict[rank]
+            rank = adot_dict[rank] # Превращаем степень из слова в число
 
 
-            word = before_dot + main_letter_adot*rank
+            word = before_dot + main_letter_adot*rank # Соединяем целую и дробную часть
 
-        elif(second_rank != None):
+        elif(second_rank != None): # Зайдем если есть только дробная часть (баш ватылды)
 
             if word[-1] == ' ':
                 word = word[:-1]
 
-            word = word.split(' ')
-            rank = word[-1]
-            del word[-1]
+            word = word.split(' ') # Делим текст на лист из слов
+            rank = word[-1] # Находим степень
+            del word[-1] # Удаляем степень
 
 
-            main_letter_adot = ' '.join(word)
+            main_letter_adot = ' '.join(word)  # Содираем для перевода
 
 
-            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
-            main_letter_adot = w2n.word_to_num(main_letter_adot)
+            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
+            main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
 
-            rank = adot_dict[rank]
+            rank = adot_dict[rank] # Превращаем степень из слова в число
 
 
-            word =  main_letter_adot * rank
-        else:
+            word =  main_letter_adot * rank # Записывем дробную часть
+        else:  # Зайдем если дробной части нет, что и есть хорошо
 
-            word = translator.translate(word, src='ru', dest='en').text
-            word = w2n.word_to_num(word)
+            word = translator.translate(word, src='ru', dest='en').text # Переводим в английский
+            word = w2n.word_to_num(word) # Переводим в число
         return word
-    except ValueError:
+    except ValueError: # Если какие-то ошибки сообщаем об этом
         return -1
     except AttributeError:
         return -1
