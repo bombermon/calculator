@@ -26,64 +26,67 @@ adot_usual = {1: 'десятых', 2: 'сотых', 3: 'тысячных', 4: '�
 #ПЕРЕВОД ЧИСЕЛ В
 translator = Translator()
 def translate_to_letter(word):
+    try:
+        second_rank = None
+        for string in adot_dict:  # ПОИСК ОПЕРАЦИИ В СТРОКЕ
+            match2 = re.search(string, word)
+            if match2:
+                second_rank = string
+        main_letter_adot = ' '
 
-    second_rank = None
-    for string in adot_dict:  # ПОИСК ОПЕРАЦИИ В СТРОКЕ
-        match2 = re.search(string, word)
-        if match2:
-            second_rank = string
-    main_letter_adot = ' '
+        match = re.search(r' и ', word)
+        if match:
+            full_str = word.split(' и ')
+            before_dot = translator.translate(full_str[0], src='ru', dest='en').text
+            before_dot = w2n.word_to_num(before_dot)
 
-    match = re.search(r' и ', word)
-    if match:
-        full_str = word.split(' и ')
-        before_dot = translator.translate(full_str[0], src='ru', dest='en').text
-        before_dot = w2n.word_to_num(before_dot)
+            after_dot = full_str[1]
 
-        after_dot = full_str[1]
+            if after_dot[-1] == ' ':
+                after_dot = after_dot[:-1]
 
-        if after_dot[-1] == ' ':
-            after_dot = after_dot[:-1]
+            after_dot = after_dot.split(' ')
+            rank = after_dot[-1]
+            del after_dot[-1]
 
-        after_dot = after_dot.split(' ')
-        rank = after_dot[-1]
-        del after_dot[-1]
+            main_letter_adot = ' '.join(after_dot)
 
-        main_letter_adot = ' '.join(after_dot)
-
-        main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
-        main_letter_adot = w2n.word_to_num(main_letter_adot)
-
-        rank = adot_dict[rank]
+            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
+            main_letter_adot = w2n.word_to_num(main_letter_adot)
 
 
-        word = before_dot + main_letter_adot*rank
-    elif(second_rank != None):
-
-        if word[-1] == ' ':
-            word = word[:-1]
-
-        word = word.split(' ')
-        rank = word[-1]
-        del word[-1]
+            rank = adot_dict[rank]
 
 
-        main_letter_adot = ' '.join(word)
+            word = before_dot + main_letter_adot*rank
+
+        elif(second_rank != None):
+
+            if word[-1] == ' ':
+                word = word[:-1]
+
+            word = word.split(' ')
+            rank = word[-1]
+            del word[-1]
 
 
-        main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
-        main_letter_adot = w2n.word_to_num(main_letter_adot)
-
-        rank = adot_dict[rank]
+            main_letter_adot = ' '.join(word)
 
 
-        word =  main_letter_adot * rank
-    else:
+            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text
+            main_letter_adot = w2n.word_to_num(main_letter_adot)
 
-        word = translator.translate(word, src='ru', dest='en').text
-        word = w2n.word_to_num(word)
-    return word
+            rank = adot_dict[rank]
 
+
+            word =  main_letter_adot * rank
+        else:
+
+            word = translator.translate(word, src='ru', dest='en').text
+            word = w2n.word_to_num(word)
+        return word
+    except ValueError:
+        return -1
 
 # ФУНКЦИЯ ДЕЛЕНИЯ
 
@@ -122,7 +125,10 @@ def division(numerator, denominator):
 
 
 def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВОДИТСЯ ОТВЕТ "-1" - следовательно что-то сделано неверно!
-####вСЕ ЕЩЕ НУЖНО СДЕЛАТЬ ПРОВЕРКУ ОБЯЗАТЕЛЬНО МОЛЮ СДЕЛАЙТЕ
+    pattern = re.compile(r'[а-яёА-ЯЁ]+')
+    goon = re.match(pattern, main_str)
+    if not goon:
+        return -1
     if not main_str:
         return -1
     current_operation = 'error'
@@ -132,14 +138,19 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
             current_operation = string  # ОПЕРАЦИЯ
     if current_operation == 'error':
         return -1
-
-    tokens = main_str.split(' ' + current_operation + ' ')  # ДЕЛИМ ЧИСЛО УДАЛЯЯ ОПЕРАЦИЮ
-    first_num, second_num = tokens[:-1], tokens[-1:]
-    first_num, second_num = first_num[0] , second_num[0]
+    try:
+        tokens = main_str.split(' ' + current_operation + ' ')  # ДЕЛИМ ЧИСЛО УДАЛЯЯ ОПЕРАЦИЮ
+        first_num, second_num = tokens[:-1], tokens[-1:]
+        first_num, second_num = first_num[0] , second_num[0]
+    except IndexError:
+        return -1
 
 
     first_num = translate_to_letter(first_num)
     second_num = translate_to_letter(second_num)
+
+    if (first_num == -1) or (second_num == -1):
+        return -1
 
     if current_operation == "плюс":
         ans = first_num + second_num
