@@ -217,14 +217,16 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
     return ans
 
 flag = True
-while flag:
-    line_main = input('Введите выражение: ')
-    line_main = line_main.lower()
 
-    ans = calc(line_main)
-    if ans != -1:
-        print('Ответ =', ans)
-        flag = False
-    else:
-        flag = True
-        print('Вы ввели неверное выражение!')
+if __name__ == "__main__":
+    while flag:
+        line_main = input('Введите выражение: ')
+        line_main = line_main.lower()
+
+        ans = calc(line_main)
+        if ans != -1:
+            print('Ответ =', ans)
+            flag = False
+        else:
+            flag = True
+            print('Вы ввели неверное выражение!')
