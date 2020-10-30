@@ -73,6 +73,8 @@ def translate_to_letter(word):
 
             main_letter_adot = ' '.join(word)  # Содираем для перевода
 
+            main_letter_adot = main_letter_adot.replace("одна", "один")  # ЗАМЕНА ОДНА НА ОДИН
+
 
             main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
             main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
