@@ -87,6 +87,8 @@ def translate_to_letter(word):
         return word
     except ValueError:
         return -1
+    except AttributeError:
+        return -1
 
 # ФУНКЦИЯ ДЕЛЕНИЯ
 
@@ -127,9 +129,9 @@ def division(numerator, denominator):
 def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВОДИТСЯ ОТВЕТ "-1" - следовательно что-то сделано неверно!
     pattern = re.compile(r'[а-яёА-ЯЁ]+')
     goon = re.match(pattern, main_str)
-    if not goon:
+    if not goon:      # ПРОВЕРКА НА РУССКИЕ СИМВОЛЫ
         return -1
-    if not main_str:
+    if not main_str:   # ПРОВЕРКА НА ПУСТОЕ ЗНАЧЕНИЕ
         return -1
     current_operation = 'error'
     for string in operation_dict:  # ПОИСК ОПЕРАЦИИ В СТРОКЕ
@@ -141,92 +143,91 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
     try:
         tokens = main_str.split(' ' + current_operation + ' ')  # ДЕЛИМ ЧИСЛО УДАЛЯЯ ОПЕРАЦИЮ
         first_num, second_num = tokens[:-1], tokens[-1:]
-        first_num, second_num = first_num[0] , second_num[0]
-    except IndexError:
+        first_num, second_num = first_num[0], second_num[0]
+    except IndexError:   # ПРОВЕРКА НА ПРАВИЛЬНОСТЬ ВВЕДЕНИЕ
         return -1
 
 
-    first_num = translate_to_letter(first_num)
+    first_num = translate_to_letter(first_num)   # ПЕРЕВОД ДВУХ ЧИСЕЛ ИЗ ТЕКСТА В ЧИСЛА
     second_num = translate_to_letter(second_num)
 
-    if (first_num == -1) or (second_num == -1):
+    if (first_num == -1) or (second_num == -1):  # ПРОВЕРКА НА ОШИБКУ (К ФУНКЦИЯМ ПЕРЕВОДА)
         return -1
 
-    if current_operation == "плюс":
+    if current_operation == "плюс":   # ОПЕРАЦИЯ СЛОЖЕНИЯ
         ans = first_num + second_num
-    elif current_operation == "умножить" or current_operation == "умножить на":
+    elif current_operation == "умножить" or current_operation == "умножить на":   # ОПЕРАЦИЯ УМНОЖЕНИЯ
         ans = first_num * second_num
-    elif current_operation == "минус":
+    elif current_operation == "минус":   # ОПЕРАЦИЯ ВЫЧИТАНИЯ
         ans = first_num - second_num
-    elif current_operation == "разделить на" or current_operation == "поделить на":
-        ans = division(first_num, second_num)
+    elif current_operation == "разделить на" or current_operation == "поделить на":    # ОПЕРАЦИЯ ДЕЛЕНИЯ,
+        ans = division(first_num, second_num)                                          # ВЫПОЛНЯЕМАЯ ОТДЕЛЬНОЙ ФУНКЦИЕЙ
+                                                                                       # devision
     ans = str(ans)
 
-
-    match = re.search('\.', ans)  # ПРОВЕРКА НА НАЛИЧИЕ ТОЧКИ
+    match = re.search('\.', ans)  # ПРОВЕРКА НА НАЛИЧИЕ ТОЧКИ (ДЕСЯТИЧНОГО ЧИСЛА)
     if match:
-        ans = ans.split('.')
-        before_dot = num2words(ans[0], lang='ru')
-        after_dot = ans[1]
+        ans = ans.split('.')    # РАЗДЕЛЕНИЕ ЧИСЛА НА "ДО ТОЧКИ" и "ПОСЛЕ ТОЧКи"
+        before_dot = num2words(ans[0], lang='ru') # ПЕРЕВОД ЧИСЛА ДО ТОЧКИ
+        after_dot = ans[1]   # ЧИСЛО ПОСЛЕ ТОЧКИ
 
-        match = re.search(r'\(', after_dot)
+        match = re.search(r'\(', after_dot)     # ПРОВЕРКА ЧИСЛА НА НАЛИЧИЕ ПЕРИОДА
         if match:
-            after_dot_parts = re.split(r'\(', after_dot)
+            after_dot_parts = re.split(r'\(', after_dot)   # ДЕЛИМ СТРОКУ НА ПЕРИОД И ТО, ЧТО ДО ПЕРИОДА, НО ПОСЛЕ ТОЧКИ
             after_dot_parts[1] = after_dot_parts[1][:-1]
-            if len(after_dot_parts[0]) + len(after_dot_parts[1]) > 6:
+            if len(after_dot_parts[0]) + len(after_dot_parts[1]) > 6:   # ОГРАНИЧЕНИЕ НА ДЛИНУ ПЕРИОДА (6)
                 after_dot = (after_dot_parts[0] + after_dot_parts[1])[:6]
             else:
                 num_of_zeroes_in_period = 0
                 for i in after_dot_parts[1]:
                     if i == '0':
-                        num_of_zeroes_in_period += 1
+                        num_of_zeroes_in_period += 1   # СЧЕТЧИК НУЛЕЙ В ПЕРИОДЕ ДО ОСНОВНОГО ЧИСЛА
                     else:
                         break
-                after_dot_parts[1] = num2words(after_dot_parts[1][num_of_zeroes_in_period:], lang='ru')
+                after_dot_parts[1] = num2words(after_dot_parts[1][num_of_zeroes_in_period:], lang='ru') # ПЕРЕВОД ЧИСЛА
 
                 ans = before_dot
 
-                if len(after_dot_parts[0]) != 0:
-                    rank_10 = adot_usual[len(after_dot_parts[0])]
+                if len(after_dot_parts[0]) != 0:                       # ПРОВЕРКА ЕСТЬ ЛИ ВООБЩЕ ЧТО-ТО ДО ПЕРИОДА
+                    rank_10 = adot_usual[len(after_dot_parts[0])]      # ДЛИНА ЧИСЛА ПОСЛЕ ТОЧКИ, НЕЯВЛЯЮЩИМСЯ ПЕРИОДОМ
                     for i in after_dot_parts[0]:
-                        if i == '0':
+                        if i == '0':                                   # УКОРАЧИВАНИЕ ЧИСЛА ПО ПОСЛЕДНИМ НУЛЯМ
                             after_dot_parts[0] = after_dot_parts[0][1:]
                         else:
                             break
-                    after_dot_parts[0] = num2words(int(after_dot_parts[0]), lang='ru')
+                    after_dot_parts[0] = num2words(int(after_dot_parts[0]), lang='ru') #
                     ans += ' и ' + after_dot_parts[0] + ' ' + rank_10
 
                 ans += ' и ' + "ноль " * num_of_zeroes_in_period + after_dot_parts[1] + " в периоде"
         match = re.search(r'\(', after_dot)
-        if not match:
-            rank_10 = adot_usual[len(after_dot)]
+        if not match:                            # ЕСЛИ НЕТ ПЕРИОДА В ЧИСЛЕ
+            rank_10 = adot_usual[len(after_dot)]                # ДЛИНА ЧИСЛА ПОСЛЕ ТОЧКИ, НЕЯВЛЯЮЩИМСЯ ПЕРИОДОМ
             for i in after_dot:
-                if i == '0':
+                if i == '0':                                    # УКОРАЧИВАНИЕ ЧИСЛА ПО ПОСЛЕДНИМ НУЛЯМ
                     after_dot = after_dot[1:]
                 else:
                     break
-            after_dot = num2words(int(after_dot), lang='ru')
+            after_dot = num2words(int(after_dot), lang='ru')            # ПЕРЕВОД ЧИСЛА ПОСЛЕ ТОЧКИ В ТЕКСТ
 
-            ans = before_dot + ' и ' + after_dot + ' ' + rank_10
+            ans = before_dot + ' и ' + after_dot + ' ' + rank_10        # ФОРМИРОВАНИЕ ГОТОВОГО ОТВЕТА В СТРОКУ
 
 
     else:  # ЕСЛИ ОБЫЧНОЕ ЧИСЛО
-        ans = num2words(ans, lang='ru')
+        ans = num2words(ans, lang='ru')   # ПЕРЕВОД ЧИСЛА ОБРАТНО В ТЕКСТ
 
-
-    return ans
+    return ans  # ВОЗВРАЩЕНИЕ ФУНКЦИЕЙ calc() ответа
 
 
 if __name__ == "__main__":
     flag = True
-    while flag:
-        line_main = input('Введите выражение: ')
-        line_main = line_main.lower()
+    while flag:         # ЦИКЛ ДЛЯ ПРОВЕРКИ КОРРЕКТНОСТИ ВВЕДЕНЫХ ЗНАЧЕНИЙ
+        line_main = input('Введите выражение: ')   # СЧИТЫВАНИЕ СТРОКИ В ВИДЕ: "ЧИСЛО ОПЕРАЦИЯ ЧИСЛО"
+        line_main = line_main.lower()              # ЗАНИЖЕНИЕ СТРОКИ В НИЖНИЙ РЕГИСТР
 
-        ans = calc(line_main)
-        if ans != -1:
+        ans = calc(line_main)                      # ВЫЗОВ ФУНКЦИИ ОСНОВНОГО КАЛЬКУЛЯТОРА
+        if ans != -1:                              # ПРОВЕРКА НА ОШИБКУ | ОШИБКА = -1, ИНАЧЕ - ОШИБОК НЕТ
             print('Ответ =', ans)
-            flag = False
+            flag = False                           # ВЫВОД СТРОКИ И ЗАВЕРШЕНИЕ ПРОГРАММЫ
         else:
             flag = True
-            print('Вы ввели неверное выражение!')
+            print('Вы ввели неверное выражение!')     # СООБЩЕНИЕ ОБ ОШИБКЕ
