@@ -216,9 +216,9 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
 
     return ans
 
-flag = True
 
 if __name__ == "__main__":
+    flag = True
     while flag:
         line_main = input('Введите выражение: ')
         line_main = line_main.lower()
