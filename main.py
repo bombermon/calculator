@@ -90,35 +90,34 @@ def translate_to_letter(word):
     except AttributeError:
         return -1
 
-# ФУНКЦИЯ ДЕЛЕНИЯ
-
+""" Функция деления с нахоженим десятичной дроби и периода, """
 def division(numerator, denominator):
+    # Делимое и делитель умножаются на 10.000.000 что бы они были целыми, т. к. алгоритм работает только с целыми числами
     numerator = int(numerator * 10000000)
-    denominator = denominator
     denominator = int(denominator * 10000000)
-    if (numerator % denominator == 0):
-        ans = str(numerator // denominator)
+    if (numerator % denominator == 0): # Проверка на делимость нацело
+        ans = str(numerator // denominator) # Делим, возвращаем, красота!!!
         return ans
     else:
-        ans = str(numerator // denominator) + "."
-        l = {}
-        index = 0
-        numerator = numerator % denominator
+        ans = str(numerator // denominator) + "." # Нахождение целой части
+        l = {} # Словарь текущих делителей
+        index = 0 # Переменная для отслеживания когда встречается текущее делимое
+        numerator = numerator % denominator # Для нахождения дробной части делимое становиться остатком от деления
         l[numerator] = index
         flag = False
-        while flag == False:
-            if numerator == 0:
+        while flag == False: # Проверка на зацикливания текущего делимого после запятой, т. е. периодичность
+            if numerator == 0: # Если текущий делитель равен нулю, то мы получаем в ответе окончалеьное частное, выходим из цикла
                 break
-            digit = numerator * 10 // denominator
-            numerator = numerator * 10 - (numerator * 10 // denominator) * denominator
-            if numerator not in l:
+            digit = numerator * 10 // denominator # Находим текущую цифру после запятой
+            numerator = numerator * 10 - (numerator * 10 // denominator) * denominator # Находим текущее делимое
+            if numerator not in l: # Если текущее делимое еще не встречалось, то записываем его в словарь, с ключом index
                 ans += str(digit)
                 index += 1
                 l[numerator] = index
-            else:
+            else: # Иначе мы получаем цикл делителей, значит получаем периодичность
                 ans += str(digit) + ")"
                 ans = ans[:l.get(numerator) + len(ans[:ans.index(".") + 1])] + "(" + ans[l.get(numerator) + len(
-                    ans[:ans.index(".") + 1]):]
+                    ans[:ans.index(".") + 1]):] # Зная начало периода с ключом index, можем записать в ans частное
                 flag = True
         return ans
 
