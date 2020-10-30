@@ -8,9 +8,6 @@ from word2number import w2n
 
 # КОНЕЦ ИМПОРТА БИБЛИОТЕК
 
-
-
-
 # НАЧАЛО РАБОТЫ С ДАННЫМИ
 
 operation_dict = ['плюс', 'минус', 'умножить', 'разделить на', 'поделить на', 'умножить на']
@@ -113,7 +110,6 @@ def division(numerator, denominator):
                 ans += str(digit)
                 index += 1
                 l[numerator] = index
-                flag = False
             else:
                 ans += str(digit) + ")"
                 ans = ans[:l.get(numerator) + len(ans[:ans.index(".") + 1])] + "(" + ans[l.get(numerator) + len(
@@ -166,29 +162,32 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВЫВО�
         if match:
             after_dot_parts = re.split(r'\(', after_dot)
             after_dot_parts[1] = after_dot_parts[1][:-1]
-            num_of_zeroes_in_period = 0
-            for i in after_dot_parts[1]:
-                if i == '0':
-                    num_of_zeroes_in_period += 1
-                else:
-                    break
-            after_dot_parts[1] = num2words(after_dot_parts[1][num_of_zeroes_in_period:], lang='ru')
-
-            ans = before_dot
-
-            if len(after_dot_parts[0]) != 0:
-                rank_10 = adot_usual[len(after_dot_parts[0])]
-                for i in after_dot_parts[0]:
+            if len(after_dot_parts[0]) + len(after_dot_parts[1]) > 6:
+                after_dot = (after_dot_parts[0] + after_dot_parts[1])[:6]
+            else:
+                num_of_zeroes_in_period = 0
+                for i in after_dot_parts[1]:
                     if i == '0':
-                        after_dot_parts[0] = after_dot_parts[0][1:]
+                        num_of_zeroes_in_period += 1
                     else:
                         break
-                after_dot_parts[0] = num2words(int(after_dot_parts[0]), lang='ru')
-                ans += ' и ' + after_dot_parts[0] + ' ' + rank_10
+                after_dot_parts[1] = num2words(after_dot_parts[1][num_of_zeroes_in_period:], lang='ru')
 
-            ans += ' и ' + "ноль " * num_of_zeroes_in_period + after_dot_parts[1] + " в периоде"
+                ans = before_dot
 
-        else:
+                if len(after_dot_parts[0]) != 0:
+                    rank_10 = adot_usual[len(after_dot_parts[0])]
+                    for i in after_dot_parts[0]:
+                        if i == '0':
+                            after_dot_parts[0] = after_dot_parts[0][1:]
+                        else:
+                            break
+                    after_dot_parts[0] = num2words(int(after_dot_parts[0]), lang='ru')
+                    ans += ' и ' + after_dot_parts[0] + ' ' + rank_10
+
+                ans += ' и ' + "ноль " * num_of_zeroes_in_period + after_dot_parts[1] + " в периоде"
+        match = re.search(r'\(', after_dot)
+        if not match:
             rank_10 = adot_usual[len(after_dot)]
             for i in after_dot:
                 if i == '0':
