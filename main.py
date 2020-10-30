@@ -28,7 +28,7 @@ translator = Translator()
 def translate_to_letter(word):
     try:
         second_rank = None
-        for string in adot_dict:  # ПОИСК ОПЕРАЦИИ В СТРОКЕ
+        for string in adot_dict:
             match2 = re.search(string, word)
             if match2:
                 second_rank = string
