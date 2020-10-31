@@ -54,6 +54,8 @@ def translate_to_letter(word):
 
             main_letter_adot = ' '.join(after_dot)
 
+            main_letter_adot = main_letter_adot.replace("одна", "один")  # ЗАМЕНА ОДИН НА ОДНА
+
             main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
             main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
 
@@ -75,6 +77,8 @@ def translate_to_letter(word):
 
             main_letter_adot = ' '.join(word)  # Содираем для перевода
 
+            main_letter_adot = main_letter_adot.replace("одна", "один")  # ЗАМЕНА ОДНА НА ОДИН
+
 
             main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
             main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
@@ -91,6 +95,8 @@ def translate_to_letter(word):
     except ValueError: # Если какие-то ошибки сообщаем об этом
         return -1
     except AttributeError:
+        return -1
+    except KeyError:
         return -1
 
 # КОНЕЦ ФУНКЦИИ ПЕРЕВОДА
