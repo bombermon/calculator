@@ -28,76 +28,79 @@ adot_usual = {1: 'десятых', 2: 'сотых', 3: 'тысячных', 4: '�
     
 """
 def translate_to_letter(word):
-    try: # Пытаемся сделать))
-        translator = Translator() # Инициализируем гугл переводчик
-        second_rank = None # Будем здесь хранить стрепень десятичной дроби
-        for string in adot_dict: # Тут мы ищем эту степень во входной строки
-            match2 = re.search(string, word)
-            if match2:
-                second_rank = string
-        main_letter_adot = ' '
+    error = True
+    while error:
+        try: # Пытаемся сделать))
+            translator = Translator() # Инициализируем гугл переводчик
+            second_rank = None # Будем здесь хранить стрепень десятичной дроби
+            for string in adot_dict: # Тут мы ищем эту степень во входной строки
+                match2 = re.search(string, word)
+                if match2:
+                    second_rank = string
+            main_letter_adot = ' '
 
-        match = re.search(r' и ', word) # Проверяем на наличие десятичной части
-        if match:
-            full_str = word.split(' и ') # Делим текст на лист из слов
-            before_dot = translator.translate(full_str[0], src='ru', dest='en').text # Переводим текст части до запятой на английский
-            before_dot = w2n.word_to_num(before_dot) # с помощью сторонней библиотеки word2number переводим наш текст в числа
+            match = re.search(r' и ', word) # Проверяем на наличие десятичной части
+            if match:
+                full_str = word.split(' и ') # Делим текст на лист из слов
+                before_dot = translator.translate(full_str[0], src='ru', dest='en').text # Переводим текст части до запятой на английский
+                before_dot = w2n.word_to_num(before_dot) # с помощью сторонней библиотеки word2number переводим наш текст в числа
 
-            after_dot = full_str[1] # Собираем часть после запятой
+                after_dot = full_str[1] # Собираем часть после запятой
 
-            if after_dot[-1] == ' ':
-                after_dot = after_dot[:-1]
+                if after_dot[-1] == ' ':
+                    after_dot = after_dot[:-1]
 
-            after_dot = after_dot.split(' ') # превращаем текст после запятой в лист из слов
-            rank = after_dot[-1] # Находим степень
-            del after_dot[-1] # Удаляем степень
+                after_dot = after_dot.split(' ') # превращаем текст после запятой в лист из слов
+                rank = after_dot[-1] # Находим степень
+                del after_dot[-1] # Удаляем степень
 
-            main_letter_adot = ' '.join(after_dot)
+                main_letter_adot = ' '.join(after_dot)
 
-            main_letter_adot = main_letter_adot.replace("одна", "один")  # ЗАМЕНА ОДИН НА ОДНА
+                main_letter_adot = main_letter_adot.replace("одна", "один")  # ЗАМЕНА ОДИН НА ОДНА
 
-            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
-            main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
-
-
-            rank = adot_dict[rank] # Превращаем степень из слова в число
-
-
-            word = before_dot + main_letter_adot*rank # Соединяем целую и дробную часть
-
-        elif(second_rank != None): # Зайдем если есть только дробная часть (баш ватылды)
-
-            if word[-1] == ' ':
-                word = word[:-1]
-
-            word = word.split(' ') # Делим текст на лист из слов
-            rank = word[-1] # Находим степень
-            del word[-1] # Удаляем степень
+                main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
+                main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
 
 
-            main_letter_adot = ' '.join(word)  # Содираем для перевода
-
-            main_letter_adot = main_letter_adot.replace("одна", "один")  # ЗАМЕНА ОДНА НА ОДИН
+                rank = adot_dict[rank] # Превращаем степень из слова в число
 
 
-            main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
-            main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
+                word = before_dot + main_letter_adot*rank # Соединяем целую и дробную часть
 
-            rank = adot_dict[rank] # Превращаем степень из слова в число
+            elif(second_rank != None): # Зайдем если есть только дробная часть (баш ватылды)
+
+                if word[-1] == ' ':
+                    word = word[:-1]
+
+                word = word.split(' ') # Делим текст на лист из слов
+                rank = word[-1] # Находим степень
+                del word[-1] # Удаляем степень
 
 
-            word =  main_letter_adot * rank # Записывем дробную часть
-        else:  # Зайдем если дробной части нет, что и есть хорошо
+                main_letter_adot = ' '.join(word)  # Содираем для перевода
 
-            word = translator.translate(word, src='ru', dest='en').text # Переводим в английский
-            word = w2n.word_to_num(word) # Переводим в число
-        return word
-    except ValueError: # Если какие-то ошибки сообщаем об этом
-        return -1
-    except AttributeError:
-        return -1
-    except KeyError:
-        return -1
+                main_letter_adot = main_letter_adot.replace("одна", "один")  # ЗАМЕНА ОДНА НА ОДИН
+
+
+                main_letter_adot = translator.translate(main_letter_adot, src='ru', dest='en').text # Переводим в английский
+                main_letter_adot = w2n.word_to_num(main_letter_adot) # Переводим в число
+
+                rank = adot_dict[rank] # Превращаем степень из слова в число
+
+
+                word =  main_letter_adot * rank # Записывем дробную часть
+            else:  # Зайдем если дробной части нет, что и есть хорошо
+
+                word = translator.translate(word, src='ru', dest='en').text # Переводим в английский
+                word = w2n.word_to_num(word) # Переводим в число
+            error = False
+            return word
+        except ValueError: # Если какие-то ошибки сообщаем об этом
+            return -1
+        except AttributeError:
+            error = True
+        except KeyError:
+            return -1
 
 # КОНЕЦ ФУНКЦИИ ПЕРЕВОДА
 
@@ -254,7 +257,7 @@ if __name__ == "__main__":
         ans = calc(line_main)                      # ВЫЗОВ ФУНКЦИИ ОСНОВНОГО КАЛЬКУЛЯТОРА
         if ans != -1:                              # ПРОВЕРКА НА ОШИБКУ | ОШИБКА = -1, ИНАЧЕ - ОШИБОК НЕТ
             print('Ответ: ', ans)
-            flag = False                           # ВЫВОД СТРОКИ И ЗАВЕРШЕНИЕ ПРОГРАММЫ
+            flag = False                         # ВЫВОД СТРОКИ И ЗАВЕРШЕНИЕ ПРОГРАММЫ
         else:
             flag = True
             print('Вы ввели неверное выражение, введите, пожалуйста, заново.')  # СООБЩЕНИЕ ОБ ОШИБКЕ
