@@ -179,7 +179,9 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВОЗВ�
     elif current_operation == "разделить на" or current_operation == "поделить на":    # ОПЕРАЦИЯ ДЕЛЕНИЯ,
         ans = division(first_num, second_num)                                          # ВЫПОЛНЯЕМАЯ ОТДЕЛЬНОЙ ФУНКЦИЕЙ
                                                                                        # division
-    ans = round(ans, 6)
+
+    if isinstance(ans, str) == False:
+        ans = round(ans, 6)
     ans = str(ans)
 
     match = re.search('\.', ans)  # ПРОВЕРКА НА НАЛИЧИЕ ТОЧКИ (ДЕСЯТИЧНОГО ЧИСЛА)
@@ -218,15 +220,17 @@ def calc(main_str):  # ФУНКЦИЯ КАЛЬКУЛЯТОР, ЕСЛИ ВОЗВ�
                 ans += ' и ' + "ноль " * num_of_zeroes_in_period + after_dot_parts[1] + " в периоде"
         match = re.search(r'\(', after_dot)
         if not match:                            # ЕСЛИ НЕТ ПЕРИОДА В ЧИСЛЕ
-            rank_10 = adot_usual[len(after_dot)]                # ДЛИНА ЧИСЛА ПОСЛЕ ТОЧКИ, НЕЯВЛЯЮЩИМСЯ ПЕРИОДОМ
+            rank_10 = adot_usual[len(after_dot)]                # ДЛИНА ЧИСЛА ПОСЛЕ ТОЧКИ, НЕЯВЛЯЮЩИМСЯ ПЕРИОДО
             for i in after_dot:
                 if i == '0':                                    # УКОРАЧИВАНИЕ ЧИСЛА ПО ПОСЛЕДНИМ НУЛЯМ
                     after_dot = after_dot[1:]
                 else:
                     break
-            after_dot = num2words(int(after_dot), lang='ru')            # ПЕРЕВОД ЧИСЛА ПОСЛЕ ТОЧКИ В ТЕКСТ
-
-            ans = before_dot + ' и ' + after_dot + ' ' + rank_10        # ФОРМИРОВАНИЕ ГОТОВОГО ОТВЕТА В СТРОКУ
+            if after_dot == '':
+                ans = before_dot
+            else:
+                after_dot = num2words(int(after_dot), lang='ru')
+                ans = before_dot + ' и ' + after_dot + ' ' + rank_10        # ФОРМИРОВАНИЕ ГОТОВОГО ОТВЕТА В СТРОКУ
 
 
     else:  # ЕСЛИ ОБЫЧНОЕ ЧИСЛО
